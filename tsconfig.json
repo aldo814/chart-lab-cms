@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "Preserve",
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "ES2017"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "sanity.config.ts",
+    "sanity.cli.ts",
+    "schemas/**/*.ts",
+    "schemas/**/*.tsx",
+    "plugins/**/*.ts",
+    "plugins/**/*.tsx"
+  ]
 }
