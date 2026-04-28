@@ -33,6 +33,11 @@ export default defineType({
       title: '작성일',
       type: 'datetime',
       initialValue: () => new Date().toISOString()
-    })
+    }),
+    defineField({
+      name: 'attachment',
+      title: '첨부파일',
+      type: 'file'  
+    }),
   ]
 })
