@@ -40,5 +40,14 @@ export default defineType({
       type: 'array',
       of: [{ type: 'file' }]
     }),
+    defineField({
+      name: 'slug',
+      title: '슬러그',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+    })
   ]
 })
