@@ -47,7 +47,16 @@ export default defineType({
       options: {
         source: 'title',
         maxLength: 96,
+        isUnique: (value, context) => context.defaultIsUnique(value, context),
+        slugify: (input) =>
+          input
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')        // 공백 → -
+            .replace(/[^\w\-가-힣]+/g, '') // 특수문자 제거 (한글 허용)
+            .replace(/\-\-+/g, '-'),     // -- → -
       },
-    })
+      validation: (Rule) => Rule.required(),
+    }),
   ]
 })
