@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import AutoSlugInput from "../components/AutoSlugInput";
 
 export default defineType({
   name: 'notice',
@@ -41,22 +42,12 @@ export default defineType({
       of: [{ type: 'file' }]
     }),
     defineField({
-      name: 'slug',
-      title: '슬러그(url생성)',
-      type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-        isUnique: (value, context) => context.defaultIsUnique(value, context),
-        slugify: (input) =>
-          input
-            .toLowerCase()
-            .trim()
-            .replace(/\s+/g, '-')        // 공백 → -
-            .replace(/[^\w\-가-힣]+/g, '') // 특수문자 제거 (한글 허용)
-            .replace(/\-\-+/g, '-'),     // -- → -
+      name: "slug",
+      title: "슬러그",
+      type: "slug",
+      components: {
+        input: AutoSlugInput,
       },
-      validation: (Rule) => Rule.required(),
     }),
   ]
 })
