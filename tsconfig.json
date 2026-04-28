@@ -7,14 +7,14 @@
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "lib": ["dom", "ES2017"]
+    "lib": ["dom", "ES2017"],
+    "checkJs": false
   },
   "include": [
     "sanity.config.ts",
     "sanity.cli.ts",
-    "schemas/**/*.ts",
-    "schemas/**/*.tsx",
-    "plugins/**/*.ts",
-    "plugins/**/*.tsx"
+    "schemas/**/*",
+    "plugins/**/*",
+    "components/**/*"
   ]
 }

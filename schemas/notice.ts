@@ -1,46 +1,51 @@
-import { defineType, defineField } from 'sanity'
+import { defineType, defineField } from "sanity";
 import AutoSlugInput from "../components/AutoSlugInput";
 
 export default defineType({
-  name: 'notice',
-  title: '공지사항',
-  type: 'document',
+  name: "notice",
+  title: "공지사항",
+  type: "document",
   fields: [
     defineField({
-      name: 'title',
-      title: '제목',
-      type: 'string',
-      validation: Rule => Rule.required()
+      name: "title",
+      title: "제목",
+      type: "string",
     }),
+
     defineField({
-      name: 'author',
-      title: '작성자',
-      type: 'reference',
-      to: [{ type: 'author' }]
+      name: "author",
+      title: "작성자",
+      type: "reference",
+      to: [{ type: "author" }],
     }),
+
     defineField({
-      name: 'content',
-      title: '내용',
-      type: 'text'
+      name: "content",
+      title: "내용",
+      type: "text",
     }),
+
     defineField({
-      name: 'isPinned',
-      title: '고정글',
-      type: 'boolean',
-      initialValue: false
+      name: "isPinned",
+      title: "고정글",
+      type: "boolean",
+      initialValue: false,
     }),
+
     defineField({
-      name: 'createdAt',
-      title: '작성일',
-      type: 'datetime',
-      initialValue: () => new Date().toISOString()
+      name: "createdAt",
+      title: "작성일",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
     }),
+
     defineField({
-      name: 'attachment',
-      title: '첨부파일',
-      type: 'array',
-      of: [{ type: 'file' }]
+      name: "attachment",
+      title: "첨부파일",
+      type: "array",
+      of: [{ type: "file" }],
     }),
+
     defineField({
       name: "slug",
       title: "슬러그",
@@ -49,5 +54,5 @@ export default defineType({
         input: AutoSlugInput,
       },
     }),
-  ]
-})
+  ],
+});

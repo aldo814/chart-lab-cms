@@ -1,14 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { set, useFormValue, useClient } from "sanity";
+import type { SlugInputProps } from "sanity";
 
-export default function AutoSlugInput(props) {
+export default function AutoSlugInput(props: SlugInputProps) {
   const { value, onChange, readOnly } = props;
 
-  const title = useFormValue(["title"]);
-  const docId = useFormValue(["_id"]);
+  const [locked, setLocked] = useState(false);
+
+  const title = useFormValue(["title"]) as string;
+  const docId = useFormValue(["_id"]) as string;
   const client = useClient({ apiVersion: "2024-01-01" });
 
-  const slugify = (input) =>
+  const slugify = (input: string) =>
     input
       ?.toString()
       .trim()
@@ -18,14 +21,16 @@ export default function AutoSlugInput(props) {
       .toLowerCase()
       .slice(0, 96);
 
-  const generateUniqueSlug = async (baseSlug) => {
+  const generateUniqueSlug = async (baseSlug: string) => {
     let slug = baseSlug;
     let count = 1;
+
+    const cleanId = docId?.replace("drafts.", "");
 
     while (true) {
       const existing = await client.fetch(
         `count(*[_type == "notice" && slug.current == $slug && _id != $id])`,
-        { slug, id: docId }
+        { slug, id: cleanId }
       );
 
       if (existing === 0) break;
@@ -40,6 +45,7 @@ export default function AutoSlugInput(props) {
   useEffect(() => {
     if (!title) return;
     if (readOnly) return;
+    if (locked) return;
     if (!docId?.startsWith("drafts.")) return;
 
     const run = async () => {
@@ -48,17 +54,25 @@ export default function AutoSlugInput(props) {
 
       if (!value?.current) {
         onChange(set({ _type: "slug", current: uniqueSlug }));
+        setLocked(true);
       }
     };
 
     run();
-  }, [title]);
+  }, [title, docId, value, readOnly, locked]);
 
   return (
     <input
       value={value?.current || ""}
       readOnly
-      style={{ width: "100%", padding: "10px" }}
+      placeholder="자동 생성됩니다"
+      style={{
+        width: "100%",
+        padding: "10px",
+        border: "1px solid #ddd",
+        borderRadius: "6px",
+        background: "#f9f9f9",
+      }}
     />
   );
 }

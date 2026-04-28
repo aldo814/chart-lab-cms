@@ -6,13 +6,11 @@ import { schemaTypes } from './schemas'
 export default defineConfig({
   name: 'default',
   title: 'chart-cms',
-
   projectId: 'u9rob73z',
   dataset: 'production',
-
   plugins: [structureTool(), visionTool()],
-
   schema: {
     types: schemaTypes,
-  },
+  }
+  
 })
