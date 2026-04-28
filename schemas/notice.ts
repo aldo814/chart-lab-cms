@@ -37,7 +37,8 @@ export default defineType({
     defineField({
       name: 'attachment',
       title: '첨부파일',
-      type: 'file'  
+      type: 'array',
+      of: [{ type: 'file' }]
     }),
   ]
 })
