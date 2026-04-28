@@ -2,13 +2,14 @@ import { useEffect } from "react";
 import { set, useFormValue, useClient } from "sanity";
 
 export default function AutoSlugInput(props) {
-  const { value, onChange } = props;
+  const { value, onChange, readOnly } = props;
 
   const title = useFormValue(["title"]);
+  const docId = useFormValue(["_id"]);
   const client = useClient({ apiVersion: "2024-01-01" });
 
-  const slugify = (input) => {
-    return input
+  const slugify = (input) =>
+    input
       ?.toString()
       .trim()
       .replace(/\s+/g, "-")
@@ -16,7 +17,6 @@ export default function AutoSlugInput(props) {
       .replace(/\-+/g, "-")
       .toLowerCase()
       .slice(0, 96);
-  };
 
   const generateUniqueSlug = async (baseSlug) => {
     let slug = baseSlug;
@@ -24,8 +24,8 @@ export default function AutoSlugInput(props) {
 
     while (true) {
       const existing = await client.fetch(
-        `count(*[_type == "notice" && slug.current == $slug])`,
-        { slug }
+        `count(*[_type == "notice" && slug.current == $slug && _id != $id])`,
+        { slug, id: docId }
       );
 
       if (existing === 0) break;
@@ -39,12 +39,14 @@ export default function AutoSlugInput(props) {
 
   useEffect(() => {
     if (!title) return;
+    if (readOnly) return;
+    if (!docId?.startsWith("drafts.")) return;
 
     const run = async () => {
       const baseSlug = slugify(title);
       const uniqueSlug = await generateUniqueSlug(baseSlug);
 
-      if (!value || value.current !== uniqueSlug) {
+      if (!value?.current) {
         onChange(set({ _type: "slug", current: uniqueSlug }));
       }
     };
@@ -53,20 +55,10 @@ export default function AutoSlugInput(props) {
   }, [title]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <input
-        type="text"
-        value={value?.current || ""}
-        readOnly
-        placeholder="자동 생성됩니다"
-        style={{
-          width: "100%",
-          padding: "10px",
-          border: "1px solid #ddd",
-          borderRadius: "6px",
-          background: "#f9f9f9",
-        }}
-      />
-    </div>
+    <input
+      value={value?.current || ""}
+      readOnly
+      style={{ width: "100%", padding: "10px" }}
+    />
   );
 }
