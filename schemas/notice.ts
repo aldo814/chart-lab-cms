@@ -42,7 +42,7 @@ export default defineType({
     }),
     defineField({
       name: 'slug',
-      title: '슬러그',
+      title: '슬러그(url생성)',
       type: 'slug',
       options: {
         source: 'title',
