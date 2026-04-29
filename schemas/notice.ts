@@ -10,6 +10,7 @@ export default defineType({
       name: "title",
       title: "제목",
       type: "string",
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
@@ -22,7 +23,51 @@ export default defineType({
     defineField({
       name: "content",
       title: "내용",
-      type: "text",
+      type: "array",
+      of: [
+        defineField({
+          type: "block",
+          styles: [
+            { title: "본문", value: "normal" },
+            { title: "제목", value: "h2" },
+            { title: "소제목", value: "h3" },
+          ],
+          lists: [{ title: "리스트", value: "bullet" }],
+          marks: {
+            decorators: [
+              { title: "Bold", value: "strong" },
+              { title: "Italic", value: "em" },
+            ],
+            annotations: [
+              {
+                name: "link",
+                type: "object",
+                title: "링크",
+                fields: [
+                  {
+                    name: "href",
+                    type: "url",
+                    title: "URL",
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+
+        // 이미지도 에디터 안에서 삽입 가능
+        defineField({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              type: "string",
+              title: "alt 텍스트",
+            }),
+          ],
+        }),
+      ],
     }),
 
     defineField({
@@ -39,11 +84,24 @@ export default defineType({
       initialValue: () => new Date().toISOString(),
     }),
 
+    // 별도 이미지 (갤러리용)
     defineField({
-      name: "attachment",
-      title: "첨부파일",
+      name: "images",
+      title: "이미지",
       type: "array",
-      of: [{ type: "file" }],
+      of: [
+        defineField({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              type: "string",
+              title: "alt 텍스트",
+            }),
+          ],
+        }),
+      ],
     }),
 
     defineField({
@@ -52,6 +110,10 @@ export default defineType({
       type: "slug",
       components: {
         input: AutoSlugInput,
+      },
+      options: {
+        source: "title",
+        maxLength: 96,
       },
     }),
   ],
