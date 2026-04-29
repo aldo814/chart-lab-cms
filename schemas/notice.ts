@@ -25,7 +25,7 @@ export default defineType({
       title: "내용",
       type: "array",
       of: [
-        defineField({
+        {
           type: "block",
           styles: [
             { title: "본문", value: "normal" },
@@ -53,20 +53,18 @@ export default defineType({
               },
             ],
           },
-        }),
-
-        // 이미지도 에디터 안에서 삽입 가능
-        defineField({
+        },
+        {
           type: "image",
           options: { hotspot: true },
           fields: [
-            defineField({
+            {
               name: "alt",
               type: "string",
               title: "alt 텍스트",
-            }),
+            },
           ],
-        }),
+        },
       ],
     }),
 
@@ -84,23 +82,34 @@ export default defineType({
       initialValue: () => new Date().toISOString(),
     }),
 
-    // 별도 이미지 (갤러리용)
     defineField({
       name: "images",
-      title: "이미지",
+      title: "썸네일",
       type: "array",
       of: [
-        defineField({
+        {
           type: "image",
           options: { hotspot: true },
           fields: [
-            defineField({
+            {
               name: "alt",
               type: "string",
               title: "alt 텍스트",
-            }),
+            },
           ],
-        }),
+        },
+      ],
+    }),
+
+    defineField({
+      name: "attachment",
+      title: "첨부파일",
+      type: "array",
+      of: [
+        {
+          type: "file",
+          title: "파일",
+        },
       ],
     }),
 
