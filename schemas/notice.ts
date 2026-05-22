@@ -1,5 +1,14 @@
 import { defineType, defineField } from "sanity";
-import AutoSlugInput from "../components/AutoSlugInput";
+
+const slugify = (input: string) =>
+  input
+    ?.toString()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^가-힣a-z0-9\-]/gi, "")
+    .replace(/\-+/g, "-")
+    .toLowerCase()
+    .slice(0, 96);
 
 export default defineType({
   name: "notice",
@@ -59,6 +68,28 @@ export default defineType({
           options: { hotspot: true },
           fields: [
             {
+              name: "displaySize",
+              type: "string",
+              title: "이미지 표시 크기",
+              initialValue: "full",
+              options: {
+                layout: "radio",
+                list: [
+                  { title: "Small", value: "small" },
+                  { title: "Medium", value: "medium" },
+                  { title: "Full", value: "full" },
+                  { title: "직접 입력", value: "custom" },
+                ],
+              },
+            },
+            {
+              name: "customWidth",
+              type: "number",
+              title: "직접 width(px)",
+              description: "이미지 표시 크기에서 직접 입력을 선택했을 때 사용합니다.",
+              validation: (Rule) => Rule.min(120).max(1600),
+            },
+            {
               name: "alt",
               type: "string",
               title: "alt 텍스트",
@@ -83,25 +114,6 @@ export default defineType({
     }),
 
     defineField({
-      name: "images",
-      title: "썸네일",
-      type: "array",
-      of: [
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            {
-              name: "alt",
-              type: "string",
-              title: "alt 텍스트",
-            },
-          ],
-        },
-      ],
-    }),
-
-    defineField({
       name: "attachment",
       title: "첨부파일",
       type: "array",
@@ -117,12 +129,26 @@ export default defineType({
       name: "slug",
       title: "슬러그",
       type: "slug",
-      components: {
-        input: AutoSlugInput,
-      },
       options: {
         source: "title",
         maxLength: 96,
+        slugify,
+        isUnique: async (slug, context) => {
+          const { document, getClient } = context;
+          const client = getClient({ apiVersion: "2024-01-01" });
+          const id = document?._id?.replace(/^drafts\./, "");
+
+          const existing = await client.fetch(
+            `count(*[_type == "notice" && slug.current == $slug && !(_id in [$draftId, $publishedId])])`,
+            {
+              draftId: `drafts.${id}`,
+              publishedId: id,
+              slug,
+            }
+          );
+
+          return existing === 0;
+        },
       },
     }),
   ],
